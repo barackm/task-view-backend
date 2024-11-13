@@ -30,9 +30,6 @@ class User(Base):
     projects = relationship("Project", back_populates="owner")
     tasks = relationship("Task", back_populates="assigned_user")
 
-
-
-# Project model
 class Project(Base):
     __tablename__ = "projects"
     id = Column(Integer, primary_key=True, index=True)
