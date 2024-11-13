@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from .modules.projects.route import router as projects_router
+from .middleware.auth_middleware import AuthMiddleware
 
 app = FastAPI(
     title="My Project API",
@@ -6,6 +8,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+app.include_router(projects_router, prefix="/projects", tags=["Projects"])
+app.add_middleware(AuthMiddleware)
 
 @app.get("/")
 async def root():

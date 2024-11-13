@@ -14,6 +14,7 @@ asyncpg = "^0.30.0"
 databases = "^0.9.0"
 alembic = "^1.14.0"
 python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.10"
 
 
 [tool.poetry.group.dev.dependencies]
