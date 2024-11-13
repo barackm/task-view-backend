@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.models import Task, User
 from .schema import TaskCreate, TaskUpdate
 from app.db.models import Project
+from typing import List
 
 def create_task(db: Session, task_data: TaskCreate) -> Task:
     project = db.query(Project).filter(Project.id == task_data.project_id).first()
@@ -51,3 +52,7 @@ def assign_task_to_user(db: Session, task_id: int, user_id: int):
     db.commit()
     db.refresh(task)
     return task
+
+
+def get_tasks_for_user(db: Session, user_id: int) -> List[Task]:
+    return db.query(Task).filter(Task.assigned_to == user_id).all()
