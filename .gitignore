@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment (created by Poetry if in-project)
+.venv/
+
+# Environment variables
+.env
+
+# macOS files
+.DS_Store
+
+# Python egg and wheel files
+*.egg-info/
+*.eggs/
+*.wheel
+
+# Caches and logs
+*.log
+*.sqlite3
+*.db
+.cache/
+*.pyo
+
+# Alembic migrations
+alembic/versions/*.pyc
+alembic/versions/*.pyc
+
+# Test results
+.pytest_cache/
+coverage/
+.coverage
+htmlcov/
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Poetry files
+poetry.lock
+
+# Other files
+*.bak
+*.swp
