@@ -11,7 +11,6 @@ SIMULATED_TOKEN = "mock-token"
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         token = request.headers.get("Authorization") or f"Bearer {SIMULATED_TOKEN}"
-        print(token)
         if token == f"Bearer {SIMULATED_TOKEN}":
             db: Session = next(get_db())
             user = db.query(User).filter(User.id == 1).first()

@@ -17,8 +17,7 @@ class TaskPriority(enum.Enum):
     HIGH = "High"
 
 def utc_now():
-    return datetime.utc_now
-
+     return datetime.datetime.now(datetime.timezone.utc)
 
 class User(Base):
     __tablename__ = "users"
