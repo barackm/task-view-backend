@@ -1,6 +1,6 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from app.db.models import Task
+from app.db.models import Task, User
 from .schema import TaskCreate, TaskUpdate
 from app.db.models import Project
 
@@ -37,3 +37,17 @@ def delete_task(db: Session, task_id: int) -> bool:
         db.commit()
         return True
     return False
+
+def assign_task_to_user(db: Session, task_id: int, user_id: int):
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    task.assigned_to = user_id
+    db.commit()
+    db.refresh(task)
+    return task

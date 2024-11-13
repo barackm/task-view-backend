@@ -29,3 +29,6 @@ class TaskResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TaskAssign(BaseModel):
+    user_id: int

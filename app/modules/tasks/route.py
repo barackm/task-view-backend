@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from .schema import TaskCreate, TaskUpdate, TaskResponse
-from .service import create_task, get_task, get_tasks, update_task, delete_task
+from .schema import TaskCreate, TaskUpdate, TaskResponse, TaskAssign
+from .service import create_task, get_task, get_tasks, update_task, delete_task, assign_task_to_user
 from typing import List
 
 router = APIRouter()
@@ -49,3 +49,8 @@ def delete_task_endpoint(
 ):
     if not delete_task(db, task_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+@router.put("/{task_id}/assign", response_model=TaskResponse)
+def assign_task_endpoint(task_id: int, assignment: TaskAssign, db: Session = Depends(get_db)):
+    print(assignment, "assignment", task_id)
+    return assign_task_to_user(db, task_id, assignment.user_id)
