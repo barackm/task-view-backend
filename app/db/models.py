@@ -25,6 +25,9 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String, unique=True, index=True)
+    position = Column(String, nullable=True)
+    skills = Column(Text, nullable=True)
+    experience_level = Column(String, nullable=True) 
     created_at = Column(TIMESTAMP, default=utc_now)
     
     projects = relationship("Project", back_populates="owner")
@@ -38,6 +41,7 @@ class Project(Base):
     created_at = Column(TIMESTAMP, default=utc_now)
     updated_at = Column(TIMESTAMP, default=utc_now, onupdate=utc_now)
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
+    tags = Column(Text)
     
     owner = relationship("User", back_populates="projects")
     tasks = relationship("Task", back_populates="project")
@@ -53,6 +57,7 @@ class Task(Base):
     updated_at = Column(TIMESTAMP, default=utc_now, onupdate=utc_now)
     assigned_to = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"))
+    tags = Column(Text)
     
     assigned_user = relationship("User", back_populates="tasks")
     project = relationship("Project", back_populates="tasks")
@@ -81,3 +86,4 @@ class TaskHistory(Base):
     
     task = relationship("Task", back_populates="history")
     user = relationship("User")
+    

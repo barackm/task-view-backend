@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.db.models import User
-from .schema import ProjectCreate, ProjectUpdate, ProjectResponse
-from .service import create_project, get_project, get_all_projects, update_project, delete_project
+from .schema import ProjectCreate, ProjectUpdate, ProjectResponse, TagRequest
+from .service import create_project, get_project, get_all_projects, update_project, delete_project, manage_tags_for_object
 from typing import List
 
 router = APIRouter()
@@ -62,3 +62,24 @@ def delete_project_endpoint(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     if not delete_project(db, project_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to delete project")
+
+
+@router.post("/{item_type}/{item_id}/tags")
+def manage_tags_endpoint(
+    item_type: str,
+    item_id: int,
+    tag_request: TagRequest,
+    db: Session = Depends(get_db)
+):
+    try:
+        obj = manage_tags_for_object(
+            db=db,
+            item_type=item_type,
+            obj_id=item_id,
+            tag=tag_request.tag,
+            action=tag_request.action
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return obj.tags.split(",") if obj.tags else []

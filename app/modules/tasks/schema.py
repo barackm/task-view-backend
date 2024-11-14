@@ -9,7 +9,9 @@ class TaskCreate(BaseModel):
     description: Optional[str] = None
     priority: TaskPriority = TaskPriority.MEDIUM
     project_id: int
+    status: TaskStatus = TaskStatus.PENDING
     assigned_to: Optional[int] = None
+    tags: Optional[List[str]] = None 
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
@@ -27,6 +29,7 @@ class TaskResponse(BaseModel):
     updated_at: datetime
     project_id: int
     assigned_to: Optional[int] = None
+    tags: Optional[str] = None
 
     class Config:
         from_attributes = True

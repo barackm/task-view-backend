@@ -6,16 +6,30 @@ from .schema import TaskCreate, TaskUpdate, TaskStatus, TaskPriority
 from app.db.models import Project
 from datetime import datetime
 from typing import List, Optional
+from ..projects.service import manage_tags_for_object
 
 def create_task(db: Session, task_data: TaskCreate) -> Task:
     project = db.query(Project).filter(Project.id == task_data.project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
+    print(task_data)
     
-    new_task = Task(**task_data.model_dump())
+    new_task = Task(
+        title=task_data.title,
+        description=task_data.description,
+        status=task_data.status,
+        priority=task_data.priority,
+        assigned_to=task_data.assigned_to,
+        project_id=task_data.project_id,
+    )
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
+
+    for tag in task_data.tags or []:
+        manage_tags_for_object(db, "task", new_task.id, tag, action="add")
+        manage_tags_for_object(db, "project", project.id, tag, action="add")
+    
     return new_task
 
 def get_task(db: Session, task_id: int) -> Task:
