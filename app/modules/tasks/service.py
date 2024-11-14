@@ -1,9 +1,11 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from app.db.models import Task, User
-from .schema import TaskCreate, TaskUpdate
+from .schema import TaskCreate, TaskUpdate, TaskStatus, TaskPriority
 from app.db.models import Project
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 
 def create_task(db: Session, task_data: TaskCreate) -> Task:
     project = db.query(Project).filter(Project.id == task_data.project_id).first()
@@ -56,3 +58,38 @@ def assign_task_to_user(db: Session, task_id: int, user_id: int):
 
 def get_tasks_for_user(db: Session, user_id: int) -> List[Task]:
     return db.query(Task).filter(Task.assigned_to == user_id).all()
+
+def search_tasks(
+    db: Session,
+    title: Optional[str] = None,
+    description: Optional[str] = None,
+    statuses: Optional[List[str]] = None,
+    priorities: Optional[List[str]] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
+    assignee_ids: Optional[List[int]] = None
+) -> List[Task]:
+    query = db.query(Task)
+
+    if title:
+        query = query.filter(Task.title.ilike(f"%{title}%"))
+    if description:
+        query = query.filter(Task.description.ilike(f"%{description}%"))
+
+    if statuses:
+        status_enums = [TaskStatus(status) for status in statuses]
+        query = query.filter(Task.status.in_(status_enums))
+
+    if priorities:
+        priority_enums = [TaskPriority(priority) for priority in priorities]
+        query = query.filter(Task.priority.in_(priority_enums))
+        
+    if assignee_ids:
+        query = query.filter(Task.assigned_to.in_(assignee_ids))
+
+    if date_from:
+        query = query.filter(Task.created_at >= date_from)
+    if date_to:
+        query = query.filter(Task.created_at <= date_to)
+
+    return query.all()

@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from .schema import TaskCreate, TaskUpdate, TaskResponse, TaskAssign
-from .service import create_task, get_task, get_tasks, update_task, delete_task, assign_task_to_user, get_tasks_for_user
+from .schema import TaskCreate, TaskUpdate, TaskResponse, TaskAssign, TaskSearchSchema
+from .service import create_task, get_task, get_tasks, update_task, delete_task, assign_task_to_user, get_tasks_for_user, search_tasks
 from typing import List
 
 router = APIRouter()
@@ -58,3 +58,22 @@ def delete_task_endpoint(
 def assign_task_endpoint(task_id: int, assignment: TaskAssign, db: Session = Depends(get_db)):
     print(assignment, "assignment", task_id)
     return assign_task_to_user(db, task_id, assignment.user_id)
+
+
+@router.post("/tasks/search")
+def search_tasks_endpoint(
+    search_criteria: TaskSearchSchema,
+    db: Session = Depends(get_db),
+):
+    results = search_tasks(
+        db=db,
+        title=search_criteria.title,
+        description=search_criteria.description,
+        statuses=search_criteria.statuses,
+        priorities=search_criteria.priorities,
+        date_from=search_criteria.date_from,
+        date_to=search_criteria.date_to,
+        assignee_ids=search_criteria.assignee_ids
+    )
+
+    return results
