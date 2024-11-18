@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from app.db.models import Task, User
 from .schema import TaskCreate, TaskUpdate, TaskStatus, TaskPriority
+import json
 from app.db.models import Project
 from datetime import datetime
 from typing import List, Optional
 from ..projects.service import manage_tags_for_object
+from app.ai.crew import TaskViewManagerCrew
 
 def create_task(db: Session, task_data: TaskCreate) -> Task:
     project = db.query(Project).filter(Project.id == task_data.project_id).first()
@@ -107,3 +109,55 @@ def search_tasks(
         query = query.filter(Task.created_at <= date_to)
 
     return query.all()
+
+def extract_matched_users(response):
+    try:
+        task_output = response.tasks_output[0] if hasattr(response, "tasks_output") else None
+        
+        if not task_output:
+            raise ValueError("No task output available in response.")
+
+        raw_data = getattr(task_output, "raw", "[]")
+
+        matched_users = json.loads(raw_data)
+        return matched_users
+
+    except Exception as e:
+        print(f"Error parsing matched users: {e}")
+        return []
+
+def get_task_assignees_suggestions(db: Session, task_id: int) -> List[User]:
+    task = db.query(Task).filter(Task.id == task_id).first()
+    users = db.query(User).all()
+    
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    
+    inputs = {
+        'task_data': {
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'priority': task.priority.name,
+            'status': task.status.name,
+        },
+        'users': [{'id': user.id, 'first_name': user.first_name, "last_name": user.last_name,  'email': user.email} for user in users]
+    }
+   
+    crew = TaskViewManagerCrew(db)
+
+    try:
+        crew_output = crew.crew().kickoff(inputs=inputs)
+
+        response = extract_matched_users(crew_output)
+        mapped_users = []
+        for user in response:
+            matched_user = db.query(User).filter(User.id == user["id"]).first()
+            if matched_user:
+                mapped_users.append(matched_user)
+        return mapped_users
+    
+    except Exception as e:
+        print(f"Error during crew kickoff: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while processing suggestions")
+    

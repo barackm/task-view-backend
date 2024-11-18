@@ -8,14 +8,13 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
-def create_project_endpoint(
-    project_data: ProjectCreate,
+@router.get("/", response_model=List[ProjectResponse])
+def read_projects(
     request: Request,
     db: Session = Depends(get_db),
 ):
     current_user: User = request.state.user
-    return create_project(db, project_data, current_user.id)
+    return get_all_projects(db, current_user.id)
 
 @router.get("/{project_id}", response_model=ProjectResponse)
 def read_project(
@@ -29,13 +28,15 @@ def read_project(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return project
 
-@router.get("/", response_model=List[ProjectResponse])
-def read_projects(
+@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
+def create_project_endpoint(
+    project_data: ProjectCreate,
     request: Request,
     db: Session = Depends(get_db),
 ):
     current_user: User = request.state.user
-    return get_all_projects(db, current_user.id)
+    return create_project(db, project_data, current_user.id)
+
 
 @router.put("/{project_id}", response_model=ProjectResponse)
 def update_project_endpoint(

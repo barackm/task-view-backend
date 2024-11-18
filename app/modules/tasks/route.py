@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from .schema import TaskCreate, TaskUpdate, TaskResponse, TaskAssign, TaskSearchSchema
-from .service import create_task, get_task, get_tasks, update_task, delete_task, assign_task_to_user, get_tasks_for_user, search_tasks
+from .service import create_task, get_task, get_tasks, update_task, delete_task, assign_task_to_user, get_tasks_for_user, search_tasks, get_task_assignees_suggestions
 from typing import List
+
 
 router = APIRouter()
 
@@ -60,7 +61,7 @@ def assign_task_endpoint(task_id: int, assignment: TaskAssign, db: Session = Dep
     return assign_task_to_user(db, task_id, assignment.user_id)
 
 
-@router.post("/tasks/search")
+@router.post("/search")
 def search_tasks_endpoint(
     search_criteria: TaskSearchSchema,
     db: Session = Depends(get_db),
@@ -77,3 +78,8 @@ def search_tasks_endpoint(
     )
 
     return results
+
+
+@router.get("/assignees-suggestions/{task_id}")
+def get_assignees_suggestions(task_id: int, db: Session = Depends(get_db)):
+    return get_task_assignees_suggestions(db, task_id)

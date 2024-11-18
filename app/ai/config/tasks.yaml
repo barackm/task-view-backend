@@ -1,0 +1,33 @@
+match_skills_to_task_task:
+  description: >
+    Task for the Task Matcher agent to identify potential users suitable for a
+    specific task based on their skills, workload, availability, and expertise.
+    This includes evaluating the requirements of the task and matching them to
+    user profiles from the system. Task information: {task_data}, users:
+    {users}.
+  expected_output: >
+    An array of JSON objects, where each object represents a potential user
+    suitable for the task. Each object contains:
+      - id: The unique identifier of the user.
+      - name: The user's full name.
+      - email: The user's email address.
+      - skills: A list of skills that match the task requirements.
+      - suitability_reason: A text explanation of why the user is suitable for
+    the task.
+
+prioritize_task_assignments_task:
+  description: >
+    Task to prioritize the assignment of the specific task to one of the
+    identified users, based on factors such as urgency, deadlines, and team
+    member availability. This includes ranking the identified users to ensure
+    optimal task allocation.
+  expected_output: >
+    A JSON object containing:
+      - prioritized_users: An array of JSON objects representing the top
+    candidates for the task, each with:
+          - id: The unique identifier of the user.
+          - name: The user's full name.
+          - rank: The user's priority rank for the task (e.g., 1 for the
+    highest-priority candidate).
+          - suitability_reason: A text explanation of why this user is ranked at
+    this position.

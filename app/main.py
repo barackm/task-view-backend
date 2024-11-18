@@ -6,8 +6,8 @@ from .modules.comments.route import router as comments_router
 from .middleware.auth_middleware import AuthMiddleware
 
 app = FastAPI(
-    title="My Project API",
-    description="An API for task management using AI agents and Google sign-in",
+    title="Task Management API",
+    description="An API for task management using AI agents",
     version="1.0.0",
 )
 
