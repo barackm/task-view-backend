@@ -17,6 +17,10 @@ python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.10"
 crewai = "^0.80.0"
 crewai-tools = "^0.14.0"
+bcrypt = "^4.2.0"
+jose = "^1.0.0"
+python-jose = "^3.3.0"
+pydantic = {extras = ["email"], version = "^2.9.2"}
 
 
 

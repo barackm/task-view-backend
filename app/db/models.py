@@ -29,6 +29,7 @@ class User(Base):
     skills = Column(Text, nullable=True)
     experience_level = Column(String, nullable=True) 
     created_at = Column(TIMESTAMP, default=utc_now)
+    password = Column(String, nullable=False)
     
     projects = relationship("Project", back_populates="owner")
     tasks = relationship("Task", back_populates="assigned_user")
