@@ -9,6 +9,7 @@ async def get_current_user(request: Request) -> UserResponse:
     """
     Retrieve the currently authenticated user's details.
     """
+    print(request.state, "request.state")
     user: User = request.state.user
     return UserResponse(
         id=user.id,
@@ -16,3 +17,4 @@ async def get_current_user(request: Request) -> UserResponse:
         last_name=user.last_name,
         email=user.email
     )
+    

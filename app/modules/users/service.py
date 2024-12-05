@@ -29,3 +29,10 @@ def create_user(db: Session, user_data: UserCreate):
     db.refresh(new_user)
     
     return new_user
+
+def get_user_by_email(db: Session, email: str):
+    """
+    Retrieve a user by email.
+    """
+    user = db.query(User).filter(User.email == email).first()
+    return user
