@@ -15,7 +15,6 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-
 @app.get("/")
 async def root():
-    return {"message": "Welcome to My Project API!"}
+    return {"message": "Welcome to Task Management API!"}

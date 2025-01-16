@@ -1,6 +1,5 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from .tools.database_query_tool import DatabaseQueryTool
 
 @CrewBase
 class TaskViewManagerCrew:
@@ -8,7 +7,6 @@ class TaskViewManagerCrew:
     
     def __init__(self, db):
         """Initialize the crew with the database session."""
-        self.db_tool = DatabaseQueryTool(db)
         self.agents_config = 'config/agents.yaml'
         self.tasks_config = 'config/tasks.yaml'
     
@@ -19,7 +17,6 @@ class TaskViewManagerCrew:
             config=self.agents_config['task_matcher_agent'],
             allow_delegation=False,
             verbose=True,
-            # tools=[self.db_tool]
         )
         
     @task
