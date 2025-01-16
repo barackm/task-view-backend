@@ -12,9 +12,13 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["Authorization", "Content-Type"],
 )
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to Task Management API!"}
+
+
+@app.post("/assignee-candidates")
+async def assignee_candidates():
+    return {"message": "Assignee candidates retrieved successfully!"}
