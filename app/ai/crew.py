@@ -5,10 +5,12 @@ from crewai.project import CrewBase, agent, crew, task
 class TaskViewManagerCrew:
     """TaskViewManager Crew for managing tasks."""
     
-    def __init__(self, db):
-        """Initialize the crew with the database session."""
+    def __init__(self, task_data=None, users=None):
+        """Initialize the crew with task data and users."""
         self.agents_config = 'config/agents.yaml'
         self.tasks_config = 'config/tasks.yaml'
+        self.task_data = task_data
+        self.users = users
     
     @agent
     def task_matcher(self) -> Agent:
@@ -17,6 +19,10 @@ class TaskViewManagerCrew:
             config=self.agents_config['task_matcher_agent'],
             allow_delegation=False,
             verbose=True,
+            context={
+                'task_data': self.task_data,
+                'users': self.users
+            }
         )
         
     @task

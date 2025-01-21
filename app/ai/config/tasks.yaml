@@ -9,8 +9,8 @@ match_skills_to_task_task:
     An array of JSON objects, where each object represents a potential user
     suitable for the task. Each object contains:
       - id: The unique identifier of the user.
-      - name: The user's full name.
-      - email: The user's email address.
+      - full_name: The user's full name.
+      - details: Additional information about the user, such as their role,
       - skills: A list of skills that match the task requirements.
       - suitability_reason: A text explanation of why the user is suitable for
     the task.
