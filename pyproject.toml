@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "task-view-backend"
 version = "0.1.0"
-description = ""
-authors = ["Baraka mukelenga <baraka.m@code-care.pro>"]
+description = "Task Management API using AI agents"
+authors = ["Barack Mukelenga <barackmukelenga100@gmail.com>"]
 readme = "README.md"
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<=3.13"
@@ -31,3 +32,6 @@ flake8 = "^7.1.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "app.main:start"

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.models.request_models import TaskAssigneeMatchRequest
 from app.ai.crew import TaskViewManagerCrew
+import uvicorn
 
 app = FastAPI(
     title="Task Management API",
@@ -17,16 +18,23 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-
 @app.get("/")
 async def root():
-    return {"message": "Welcome to My Project API!"}
+    return {"message": "Welcome to Task Management API!"}
 
-@app.post("/task-assignee-matcher")
-async def task_assignee_matcher(request: TaskAssigneeMatchRequest):
+
+@app.post("/assignee-candidates")
+async def assignee_candidates(request: TaskAssigneeMatchRequest):
     crew = TaskViewManagerCrew(
         task_data=request.task_data.model_dump(),
         users=[user.model_dump() for user in request.users]
     )
     result = crew.crew().kickoff()
     return result
+
+def start():
+    """Entry point for the application."""
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+if __name__ == "__main__":
+    start()

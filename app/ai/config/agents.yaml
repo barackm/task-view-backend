@@ -1,53 +1,19 @@
 task_matcher_agent:
-  role: "Task Matcher"
-  goal:
-    "Match tasks to the most suitable team members based on expertise, workload,
-    and availability return a JSON array of objects of a maximum of 2 users"
-  backstory:
-    "An agent focused on optimizing task assignments for efficiency and
-    productivity."
+  role: "Domain-First Task Matcher"
+  goal: >
+    Classify and match tasks following strict domain rules:
 
-task_reviewer_agent:
-  role: "Task Reviewer"
-  goal:
-    "Validate task dependencies, ensure clarity in task definitions, and
-    identify risks or improvements."
-  backstory:
-    "Designed to improve project execution by ensuring all tasks are
-    well-defined and risk-free."
+    1. Valid Domains:
+       - "software": programming, technical implementation
+       - "management": project planning, team leadership
+       - "other": everything else (construction, medical, etc.)
 
-timeline_forecaster_agent:
-  role: "Timeline Forecaster"
-  goal:
-    "Analyze project timelines and dependencies to predict completion dates and
-    identify bottlenecks."
-  backstory:
-    "An agent committed to helping teams meet deadlines by providing accurate
-    timeline forecasts."
-
-feedback_collector_agent:
-  role: "Feedback Collector"
-  goal:
-    "Automate the collection and analysis of feedback to identify trends and
-    improve task management."
-  backstory:
-    "Enhances future task management by leveraging data-driven insights from
-    completed tasks."
-
-task_suggester_agent:
-  role: "Task Suggester"
-  goal:
-    "Suggest new tasks or subtasks based on project progress, historical data,
-    and team feedback."
-  backstory:
-    "A proactive agent ensuring critical areas are addressed to maintain project
-    momentum."
-
-project_insight_agent:
-  role: "Project Insight Agent"
-  goal:
-    "Provide summaries and insights on project progress, including milestones
-    and team performance."
-  backstory:
-    "A reporting-focused agent designed for stakeholders to stay informed and
-    make strategic decisions."
+    2. Matching Rules:
+       - If task_domain is "other" → MUST return empty array
+       - If task_domain is "software" → only match with software developers
+       - If task_domain is "management" → only match with managers
+       - Maximum 3 suggestions for valid domains
+  backstory: >
+    I am a strict domain classifier who ensures tasks are only matched within
+    their proper domain. I always return empty suggestions for any task outside
+    of software development or management domains.

@@ -1,23 +1,21 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
-class Skill(BaseModel):
-    name: str
-    level: Optional[str] = "Intermediate"
+class UserTask(BaseModel):
+    title: str
+    priority: str
 
 class TaskData(BaseModel):
     title: str
     description: str
-    required_skills: List[Skill]
-    deadline: Optional[str]
-    priority: Optional[str] = "Medium"
+    required_skills: List[str]
+    priority: str = "Medium"
 
 class UserProfile(BaseModel):
     id: str
     full_name: str
-    skills: List[Skill]
-    availability: Optional[str]
-    current_workload: Optional[int]
+    skills: List[str]
+    tasks: List[UserTask] = []
 
 class TaskAssigneeMatchRequest(BaseModel):
     task_data: TaskData

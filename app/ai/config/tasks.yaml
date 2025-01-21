@@ -1,33 +1,84 @@
+classify_domains_task:
+  description: >
+    Classify task and users into STRICT domains:
+
+    Valid Domains: 1. "software": programming, development, technical tasks 2.
+    "management": planning, coordination, leadership 3. "other": ANYTHING else
+    (construction, medical, legal, etc.)
+
+    Classification Rules: - "software" ONLY IF clearly involves
+    programming/development - "management" ONLY IF clearly involves project/team
+    management - "other" for EVERYTHING else - no exceptions
+
+    Input: {task_data}, {users}
+  expected_output: >
+    {
+      "task_domain": "string (must be one of: 'software', 'management',
+    'other')",
+      "classified_users": [
+        {
+          "user_id": "string",
+          "domain": "string (must be one of: 'software', 'management', 'other')"
+        }
+      ]
+    }
+
 match_skills_to_task_task:
   description: >
-    Task for the Task Matcher agent to identify potential users suitable for a
-    specific task based on their skills, workload, availability, and expertise.
-    This includes evaluating the requirements of the task and matching them to
-    user profiles from the system. Task information: {task_data}, users:
-    {users}.
+    Task for the Task Matcher agent to identify potential users for a given
+    task, matching them based on domain classification, skills, workload, and
+    expertise. - Input: {task_data}, {users} - Output: a list of possible user
+    assignments if domain matches. Never and never assign a task to a user in a
+    different domain. understand a nd classify the domain of the task first
+    before assigning it to a user. a developer can never be assigned a
+    management or political task and vice versa. This applies to all other
+    domain classifications, remember you will be receiving tasks from any domain
+    but never assign a task to a user in a different domain.
+
   expected_output: >
-    An array of JSON objects, where each object represents a potential user
-    suitable for the task. Each object contains:
-      - id: The unique identifier of the user.
-      - full_name: The user's full name.
-      - details: Additional information about the user, such as their role,
-      - skills: A list of skills that match the task requirements.
-      - suitability_reason: A text explanation of why the user is suitable for
-    the task.
+    An array of JSON objects. Each object includes:
+      - id: Unique user identifier
+      - full_name: The user’s full name
+      - details: Additional user information (role, domain)
+      - skills: Matching skills for the task
+      - suitability_reason: Short text explaining the match
 
 prioritize_task_assignments_task:
   description: >
-    Task to prioritize the assignment of the specific task to one of the
-    identified users, based on factors such as urgency, deadlines, and team
-    member availability. This includes ranking the identified users to ensure
-    optimal task allocation.
+    Task to prioritize the assignments for a specific domain-based task, given a
+    list of matching users. Considers urgency, deadlines, and user availability.
+    - Input: The previously matched user list. - Output: A priority ranking of
+    these users.
+
   expected_output: >
     A JSON object containing:
-      - prioritized_users: An array of JSON objects representing the top
-    candidates for the task, each with:
-          - id: The unique identifier of the user.
-          - name: The user's full name.
-          - rank: The user's priority rank for the task (e.g., 1 for the
-    highest-priority candidate).
-          - suitability_reason: A text explanation of why this user is ranked at
-    this position.
+      - prioritized_users: An array of JSON objects with:
+          - id: Unique user identifier
+          - full_name: The user’s full name
+          - rank: Priority ranking (1 is highest)
+          - suitability_reason: Explanation for the ranking
+
+analyze_and_assign_task:
+  description: >
+    Use domain classification results to make assignments:
+
+    1. Check task_domain from previous classification:
+       IF task_domain is "other" → IMMEDIATELY return empty suggestions
+       
+    2. ONLY if task_domain is "software" or "management":
+       - Filter users with matching domain
+       - Check skill matches
+       - Consider workload
+       - Return up to 3 best matches
+
+    3. NO EXCEPTIONS:
+       - If task_domain is "other" → must return []
+       - If no users in matching domain → must return []
+       - If unsure about domain → must return []
+
+    Task details: {task_data} Available users: {users}
+  expected_output: >
+    {
+      "status": "success",
+      "suggestions": []
+    }
