@@ -1,43 +1,58 @@
 classify_domains_task:
   description: >
-    Classify task and users into STRICT domains:
+    Domain Classification Rules:
 
-    Valid Domains: 1. "software": programming, development, technical tasks 2.
-    "management": planning, coordination, leadership 3. "other": ANYTHING else
-    (construction, medical, legal, etc.)
+    1. Software Domain MUST include:
+       - All testing and QA tasks
+       - Test automation work
+       - E2E testing implementation
+       - Testing frameworks (Cypress, Jest, etc.)
+       - QA automation tasks
+       
+    2. Key Software Indicators:
+       - Testing frameworks mentioned
+       - Automation tools
+       - QA-related skills
+       - Test implementation tasks
+       - Technical validation work
 
-    Classification Rules: - "software" ONLY IF clearly involves
-    programming/development - "management" ONLY IF clearly involves project/team
-    management - "other" for EVERYTHING else - no exceptions
+    3. Classification Guidelines:
+       - Testing tasks are ALWAYS software domain
+       - QA automation is ALWAYS software domain
+       - Test implementation is ALWAYS software domain
 
-    Input: {task_data}, {users}
   expected_output: >
     {
-      "task_domain": "string (must be one of: 'software', 'management',
-    'other')",
+      "task_domain": "string (software|management|other)",
+      "domain_evidence": "string",
       "classified_users": [
         {
-          "user_id": "string",
-          "domain": "string (must be one of: 'software', 'management', 'other')"
+          "user_id": "string (MUST be exact ID from input users array)",  #
+    Changed from 'id' to 'user_id'
+          "domain": "string (software|management|other)",
+          "confidence": "high|medium|low"
         }
       ]
     }
+
+    IMPORTANT: - The user_id field MUST match exactly with input users array -
+    Example: If input has user with "id": "qa1", use "user_id": "qa1"
 
 match_skills_to_task_task:
   description: >
     Task for the Task Matcher agent to identify potential users for a given
     task, matching them based on domain classification, skills, workload, and
     expertise. - Input: {task_data}, {users} - Output: a list of possible user
-    assignments if domain matches. Never and never assign a task to a user in a
-    different domain. understand a nd classify the domain of the task first
-    before assigning it to a user. a developer can never be assigned a
-    management or political task and vice versa. This applies to all other
-    domain classifications, remember you will be receiving tasks from any domain
-    but never assign a task to a user in a different domain.
+    assignments if domain matches. Never assign a task to a user in a different
+    domain. Understand and classify the domain of the task first before
+    assigning it to a user. A developer can never be assigned a management or
+    political task and vice versa. This applies to all other domain
+    classifications; remember you will be receiving tasks from any domain but
+    never assign a task to a user in a different domain.
 
   expected_output: >
     An array of JSON objects. Each object includes:
-      - id: Unique user identifier
+      - id: the id of the user,
       - full_name: The user’s full name
       - details: Additional user information (role, domain)
       - skills: Matching skills for the task
@@ -53,32 +68,53 @@ prioritize_task_assignments_task:
   expected_output: >
     A JSON object containing:
       - prioritized_users: An array of JSON objects with:
-          - id: Unique user identifier
+          - id: the id of the user,
           - full_name: The user’s full name
           - rank: Priority ranking (1 is highest)
           - suitability_reason: Explanation for the ranking
 
 analyze_and_assign_task:
   description: >
-    Use domain classification results to make assignments:
+    Matching Rules:
 
-    1. Check task_domain from previous classification:
-       IF task_domain is "other" → IMMEDIATELY return empty suggestions
-       
-    2. ONLY if task_domain is "software" or "management":
-       - Filter users with matching domain
-       - Check skill matches
-       - Consider workload
-       - Return up to 3 best matches
+    1. Context Processing:
+       - Use classified_users from previous task result
+       - Match user_id exactly with the IDs from classify_domains_task
+       - Only consider users classified as matching domain
+       - Preserve exact IDs throughout processing
 
-    3. NO EXCEPTIONS:
-       - If task_domain is "other" → must return []
-       - If no users in matching domain → must return []
-       - If unsure about domain → must return []
+    2. Task Understanding:
+       - Read input task requirements carefully
+       - Extract EXACT required skills from task_data
+       - Match only against ACTUAL user skills
+       - Use REAL skill names from user profiles
 
-    Task details: {task_data} Available users: {users}
+    3. User Matching Process:
+       - Use ONLY user IDs from the input users array
+       - Match only against skills that exist in user profile
+       - Never invent or assume skills
+       - Check workload (current tasks)
+
+    4. Skill Priority for E2E Testing:
+       - Match "Cypress" if required
+       - Match "JavaScript" if required
+       - Match actual QA/Testing skills
+       - Consider related skills from user profile
+
+    5. Response Rules:
+       - user_id must come from input users array
+       - skill_matches must be actual skills from user's profile
+       - Only include skills that match task requirements
+       - Confidence score based on actual skill matches
+
   expected_output: >
     {
-      "status": "success",
-      "suggestions": []
+      "suggestions": [
+        {
+          "user_id": "string (must be an ID from input users array)",
+          "domain_match": "software",
+          "skill_matches": ["actual skills from user profile"],
+          "confidence_score": "number (based on actual skill matches)"
+        }
+      ]
     }

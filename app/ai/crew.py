@@ -1,5 +1,16 @@
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
+
+llm = LLM(
+    model="gpt-4-1106-preview",  # Use proper OpenAI model name
+    temperature=0.8,
+    max_tokens=150,
+    top_p=0.9,
+    frequency_penalty=0.1,
+    presence_penalty=0.1,
+    stop=["END"],
+    seed=42
+)
 
 @CrewBase
 class TaskViewManagerCrew:
@@ -16,20 +27,20 @@ class TaskViewManagerCrew:
     def domain_classifier(self) -> Agent:
         """Agent responsible for classifying task and user domains."""
         return Agent(
-            role="Domain Classification Expert",
-            goal="Accurately classify tasks and users into their respective domains",
-            backstory="I am an expert at identifying which domain a task or person belongs to",
+            config=self.agents_config['domain_classifier_agent'],
             verbose=True,
-            allow_delegation=False
+            allow_delegation=False,
+            llm=llm
         )
     
     @agent
     def task_matcher(self) -> Agent:
-        """Agent responsible for analyzing and suggesting task assignments."""
+        """Agent responsible for matching tasks with suitable users."""
         return Agent(
             config=self.agents_config['task_matcher_agent'],
-            allow_delegation=False,
             verbose=True,
+            allow_delegation=False,
+            llm=llm,
             context={
                 'task_data': self.task_data,
                 'users': self.users
@@ -38,21 +49,23 @@ class TaskViewManagerCrew:
         
     @task
     def classify_domains_task(self) -> Task:
-        """Task for classifying domains of task and users."""
+        """Task for strict domain classification."""
         return Task(
             config=self.tasks_config['classify_domains_task'],
-            agent=self.domain_classifier()
+            agent=self.domain_classifier(),
+            llm=llm
         )
         
     @task
     def analyze_assignment_task(self) -> Task:
-        """Task for analyzing and suggesting assignments."""
+        """Task for finding suitable assignees."""
         return Task(
             config=self.tasks_config['analyze_and_assign_task'],
             agent=self.task_matcher(),
-            context=[self.classify_domains_task()]  # Use results from classification
-        ) 
-        
+            context=[self.classify_domains_task()],
+            llm=llm
+        )
+    
     @crew
     def crew(self) -> Crew:
         """Creates the TaskViewManager Crew."""

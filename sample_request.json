@@ -1,8 +1,8 @@
 {
   "task_data": {
-    "title": "Implement Authentication System",
-    "description": "Design and implement a secure JWT-based authentication system with refresh token functionality",
-    "required_skills": ["Python", "FastAPI", "Security"],
+    "title": "Implement E2E Test Suite",
+    "description": "Create end-to-end tests using Cypress to validate the user flows in our web application",
+    "required_skills": ["JavaScript", "Cypress", "Testing"],
     "priority": "High"
   },
   "users": [
