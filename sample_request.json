@@ -2,7 +2,6 @@
   "task_data": {
     "title": "Implement E2E Test Suite",
     "description": "Create end-to-end tests using Cypress to validate the user flows in our web application",
-    "required_skills": ["JavaScript", "Cypress", "Testing"],
     "priority": "High"
   },
   "users": [
@@ -88,13 +87,7 @@
     {
       "id": "devops1",
       "full_name": "Emily Watson",
-      "skills": [
-        "DevOps",
-        "Security",
-        "Cloud Infrastructure",
-        "Python",
-        "Docker"
-      ],
+      "skills": ["DevOps", "Security", "Cloud Infrastructure", "Python", "Docker"],
       "tasks": [
         {
           "title": "Kubernetes Deployment",
@@ -105,12 +98,7 @@
     {
       "id": "pm1",
       "full_name": "Robert Clark",
-      "skills": [
-        "Project Management",
-        "Agile",
-        "Risk Management",
-        "Technical Documentation"
-      ],
+      "skills": ["Project Management", "Agile", "Risk Management", "Technical Documentation"],
       "tasks": [
         {
           "title": "Sprint Planning",

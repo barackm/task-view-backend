@@ -1,77 +1,163 @@
-from crewai import Agent, Crew, Process, Task, LLM
+from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from typing import Dict, List
+from app.models.request_models import TaskAssigneeMatchResponse, UserSuggestion
+import json
 
-llm = LLM(
-    model="gpt-4-1106-preview",  # Use proper OpenAI model name
-    temperature=0.8,
-    max_tokens=150,
-    top_p=0.9,
-    frequency_penalty=0.1,
-    presence_penalty=0.1,
-    stop=["END"],
-    seed=42
-)
 
 @CrewBase
-class TaskViewManagerCrew:
-    """TaskViewManager Crew for task assignment."""
-    
-    def __init__(self, task_data=None, users=None):
-        """Initialize the crew with task data and users."""
-        self.agents_config = 'config/agents.yaml'
-        self.tasks_config = 'config/tasks.yaml'
-        self.task_data = task_data
-        self.users = users
-    
+class TaskAssignerCrew:
+    """Crew for matching tasks with qualified users"""
+
+    agents_config = "config/agents.yaml"
+    tasks_config = "config/tasks.yaml"
+
+    def __init__(self):
+        # Initialize analysis results
+        self.task_analysis = None
+        self.user_analysis = None
+        self.workload_analysis = None
+        # Initialize contexts as lists
+        self.task_context = []
+        self.user_context = []
+        self.workload_context = []
+        self._inputs = None
+
+    def set_contexts(self, inputs: Dict):
+        """Set up contexts for all tasks"""
+        print("\n=== Crew Input Data ===")
+        print(f"Task Data: {json.dumps(inputs['task_data'], indent=2)}")
+        print(f"Users: {json.dumps(inputs['users'], indent=2)}")
+        print("=====================\n")
+
+        self._inputs = inputs
+        task_data = inputs["task_data"]
+        users = inputs["users"]
+
+        # Set task context
+        self.task_context = [
+            "You must analyze only the following task:",
+            f"Title: {task_data['title']}",
+            f"Description: {task_data['description']}",
+            f"Priority: {task_data['priority']}",
+            "Identify required skills and expertise level from the task description.",
+            "Your output should be in JSON format.",
+        ]
+        print("\n=== Task Context ===")
+        print("\n".join(self.task_context))
+        print("==================\n")
+
+        # Set user context
+        self.user_context = [
+            "Analyze only these actual users:",
+            *[
+                f"User ID: {user['id']}\nName: {user['full_name']}\nSkills: {', '.join(user['skills'])}\nCurrent Tasks: {len(user['tasks'])}"
+                for user in users
+            ],
+            "Based on the task analysis, determine which users are qualified.",
+            "Your output must be in JSON format with qualified_users array containing user IDs and qualification reasons.",
+        ]
+        print("\n=== User Context ===")
+        print("\n".join(self.user_context))
+        print("==================\n")
+
+        # Set workload context
+        self.workload_context = [
+            f"New Task Priority: {task_data['priority']}",
+            "For each qualified user, analyze their current workload:",
+            *[
+                f"User {user['id']} current tasks: {len(user['tasks'])}"
+                for user in users
+            ],
+            "Return JSON with recommended_users array containing: {id: user_id, reason: 'qualification and workload explanation'}",
+        ]
+        print("\n=== Workload Context ===")
+        print("\n".join(self.workload_context))
+        print("=====================\n")
+
     @agent
-    def domain_classifier(self) -> Agent:
-        """Agent responsible for classifying task and user domains."""
+    def task_analyzer(self) -> Agent:
         return Agent(
-            config=self.agents_config['domain_classifier_agent'],
+            config=self.agents_config["task_analyzer"],
             verbose=True,
             allow_delegation=False,
-            llm=llm
         )
-    
+
     @agent
-    def task_matcher(self) -> Agent:
-        """Agent responsible for matching tasks with suitable users."""
+    def user_profiler(self) -> Agent:
         return Agent(
-            config=self.agents_config['task_matcher_agent'],
+            config=self.agents_config["user_profiler"],
             verbose=True,
             allow_delegation=False,
-            llm=llm,
-            context={
-                'task_data': self.task_data,
-                'users': self.users
-            }
         )
-        
+
+    @agent
+    def workload_analyzer(self) -> Agent:
+        return Agent(
+            config=self.agents_config["workload_analyzer"],
+            verbose=True,
+            allow_delegation=False,
+        )
+
     @task
-    def classify_domains_task(self) -> Task:
-        """Task for strict domain classification."""
+    def analyze_task(self) -> Task:
         return Task(
-            config=self.tasks_config['classify_domains_task'],
-            agent=self.domain_classifier(),
-            llm=llm
+            config=self.tasks_config["analyze_task"],
+            agent=self.task_analyzer(),
+            context=self.task_context,
         )
-        
+
     @task
-    def analyze_assignment_task(self) -> Task:
-        """Task for finding suitable assignees."""
+    def analyze_users(self) -> Task:
         return Task(
-            config=self.tasks_config['analyze_and_assign_task'],
-            agent=self.task_matcher(),
-            context=[self.classify_domains_task()],
-            llm=llm
+            config=self.tasks_config["analyze_users"],
+            agent=self.user_profiler(),
+            context=self.user_context,
         )
-    
+
+    @task
+    def analyze_workload(self) -> Task:
+        return Task(
+            config=self.tasks_config["analyze_workload"],
+            agent=self.workload_analyzer(),
+            context=self.workload_context,
+        )
+
     @crew
     def crew(self) -> Crew:
-        """Creates the TaskViewManager Crew."""
-        return Crew(
-            agents=[self.domain_classifier(), self.task_matcher()],
-            tasks=[self.classify_domains_task(), self.analyze_assignment_task()],
+        """Creates the TaskAssigner crew"""
+        crew_instance = Crew(
+            agents=self.agents,
+            tasks=self.tasks,
             process=Process.sequential,
-            verbose=True
+            verbose=True,
         )
+
+        # Override the default output to force JSON response
+        def process_output(output):
+            try:
+                if hasattr(output, "tasks_output"):
+                    # Get the final analysis
+                    final_analysis = output.tasks_output[-1].raw
+                    # Extract user suggestions
+                    suggestions = []
+                    for user in self._inputs["users"]:
+                        # Only include users that match the required skills
+                        if any(
+                            skill.lower() in final_analysis.lower()
+                            for skill in user["skills"]
+                        ):
+                            suggestions.append(
+                                {
+                                    "id": user["id"],
+                                    "reason": f"Matches required skills: {', '.join(user['skills'])}. Current workload: {len(user['tasks'])} tasks.",
+                                }
+                            )
+                    return TaskAssigneeMatchResponse(suggestions=suggestions)
+                return TaskAssigneeMatchResponse(suggestions=[])
+            except Exception as e:
+                print(f"Error processing output: {e}")
+                return TaskAssigneeMatchResponse(suggestions=[])
+
+        crew_instance.process_output = process_output
+        return crew_instance

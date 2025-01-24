@@ -1,120 +1,20 @@
-classify_domains_task:
+analyze_task:
   description: >
-    Domain Classification Rules:
-
-    1. Software Domain MUST include:
-       - All testing and QA tasks
-       - Test automation work
-       - E2E testing implementation
-       - Testing frameworks (Cypress, Jest, etc.)
-       - QA automation tasks
-       
-    2. Key Software Indicators:
-       - Testing frameworks mentioned
-       - Automation tools
-       - QA-related skills
-       - Test implementation tasks
-       - Technical validation work
-
-    3. Classification Guidelines:
-       - Testing tasks are ALWAYS software domain
-       - QA automation is ALWAYS software domain
-       - Test implementation is ALWAYS software domain
-
+    Analyze the given task details to identify required skills and expertise level. You must only analyze the provided
+    task, do not make assumptions about other tasks. Output must be in JSON format.
   expected_output: >
-    {
-      "task_domain": "string (software|management|other)",
-      "domain_evidence": "string",
-      "classified_users": [
-        {
-          "user_id": "string (MUST be exact ID from input users array)",  #
-    Changed from 'id' to 'user_id'
-          "domain": "string (software|management|other)",
-          "confidence": "high|medium|low"
-        }
-      ]
-    }
+    JSON containing required_skills array and expertise_level string.
 
-    IMPORTANT: - The user_id field MUST match exactly with input users array -
-    Example: If input has user with "id": "qa1", use "user_id": "qa1"
-
-match_skills_to_task_task:
+analyze_users:
   description: >
-    Task for the Task Matcher agent to identify potential users for a given
-    task, matching them based on domain classification, skills, workload, and
-    expertise. - Input: {task_data}, {users} - Output: a list of possible user
-    assignments if domain matches. Never assign a task to a user in a different
-    domain. Understand and classify the domain of the task first before
-    assigning it to a user. A developer can never be assigned a management or
-    political task and vice versa. This applies to all other domain
-    classifications; remember you will be receiving tasks from any domain but
-    never assign a task to a user in a different domain.
-
+    Review only the provided users' skills and match against task requirements. Do not invent or assume additional users
+    exist. Output must be in JSON format.
   expected_output: >
-    An array of JSON objects. Each object includes:
-      - id: the id of the user,
-      - full_name: The user’s full name
-      - details: Additional user information (role, domain)
-      - skills: Matching skills for the task
-      - suitability_reason: Short text explaining the match
+    JSON containing qualified_users array with user IDs and qualification reasons.
 
-prioritize_task_assignments_task:
+analyze_workload:
   description: >
-    Task to prioritize the assignments for a specific domain-based task, given a
-    list of matching users. Considers urgency, deadlines, and user availability.
-    - Input: The previously matched user list. - Output: A priority ranking of
-    these users.
-
+    Analyze workload only for the actual provided users. Consider their current number of tasks and the new task
+    priority. Output must be in JSON format.
   expected_output: >
-    A JSON object containing:
-      - prioritized_users: An array of JSON objects with:
-          - id: the id of the user,
-          - full_name: The user’s full name
-          - rank: Priority ranking (1 is highest)
-          - suitability_reason: Explanation for the ranking
-
-analyze_and_assign_task:
-  description: >
-    Matching Rules:
-
-    1. Context Processing:
-       - Use classified_users from previous task result
-       - Match user_id exactly with the IDs from classify_domains_task
-       - Only consider users classified as matching domain
-       - Preserve exact IDs throughout processing
-
-    2. Task Understanding:
-       - Read input task requirements carefully
-       - Extract EXACT required skills from task_data
-       - Match only against ACTUAL user skills
-       - Use REAL skill names from user profiles
-
-    3. User Matching Process:
-       - Use ONLY user IDs from the input users array
-       - Match only against skills that exist in user profile
-       - Never invent or assume skills
-       - Check workload (current tasks)
-
-    4. Skill Priority for E2E Testing:
-       - Match "Cypress" if required
-       - Match "JavaScript" if required
-       - Match actual QA/Testing skills
-       - Consider related skills from user profile
-
-    5. Response Rules:
-       - user_id must come from input users array
-       - skill_matches must be actual skills from user's profile
-       - Only include skills that match task requirements
-       - Confidence score based on actual skill matches
-
-  expected_output: >
-    {
-      "suggestions": [
-        {
-          "user_id": "string (must be an ID from input users array)",
-          "domain_match": "software",
-          "skill_matches": ["actual skills from user profile"],
-          "confidence_score": "number (based on actual skill matches)"
-        }
-      ]
-    }
+    JSON containing recommended_users array with user IDs and detailed reasons.
