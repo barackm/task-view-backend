@@ -7,14 +7,15 @@ analyze_task:
 
 analyze_users:
   description: >
-    Review only the provided users {users} skills and match against task requirements. Do not invent or assume
-    additional users exist. Output must be in JSON format.
+    Review only the provided users {users} skills and match against task requirements. Return maximum 2 best matching
+    users. Do not invent or assume additional users exist. Output must be in JSON format.
   expected_output: >
-    JSON containing qualified_users array with user IDs and qualification reasons.
+    JSON containing qualified_users array with 0-2 user IDs and qualification reasons.
 
 analyze_workload:
   description: >
     Analyze workload only for the actual provided users. Consider their current number of tasks and the new task
-    priority. Output must be in JSON format.
+    priority. Return maximum 2 users. Output must be in JSON format.
   expected_output: >
-    JSON containing suggestions array with user IDs and detailed reasons.
+    JSON containing suggestions array with 0-2 user IDs and detailed reasons for assignment suitability. user_id: string
+    reason: string

@@ -1,4 +1,3 @@
-```json
 {
   "required_skills": [
     "React",
@@ -7,8 +6,8 @@
     "Tailwind CSS",
     "Responsive Design",
     "React Query",
-    "API Integration"
+    "API Integration",
+    "Form Validation"
   ],
-  "expertise_level": "Intermediate"
+  "expertise_level": "Intermediate to Advanced"
 }
-```

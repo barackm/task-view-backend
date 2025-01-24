@@ -2,7 +2,7 @@
   "qualified_users": [
     {
       "id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
-      "qualification_reason": "User has skills in Frontend development, ReactJS, NextJS, Tailwind, JavaScript, CSS, and HTML, which align with the required skills in Tailwind CSS and React."
+      "qualification_reason": "Fidel Zukerburg has skills in Frontend development, specifically ReactJS and Tailwind, which align well with the required skills of React, Tailwind CSS, and Responsive Design. His skill set supports the necessary competencies for intermediate to advanced work in front-end applications."
     }
   ]
 }
