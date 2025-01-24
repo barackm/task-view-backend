@@ -1,0 +1,8 @@
+{
+  "suggestions": [
+    {
+      "user_id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
+      "reason": "User is the only qualified candidate, possessing robust skills in Frontend development, specifically with Tailwind CSS and ReactJS, which are necessary for the new task. Additionally, considering their relevant experience and expertise, they are not currently overloaded with tasks, hence they can efficiently take on the new assignment."
+    }
+  ]
+}

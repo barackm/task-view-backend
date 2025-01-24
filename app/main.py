@@ -27,31 +27,15 @@ async def root():
     return {"message": "Welcome to Task Management API!"}
 
 
-@app.post("/assignee-candidates", response_model=TaskAssigneeMatchResponse)
+@app.post("/assignee-candidates")
 async def assignee_candidates(request: TaskAssigneeMatchRequest):
     try:
-        print("\n=== Input Data ===")
-        print("\nTask Data:")
-        print(f"Title: {request.task_data.title}")
-        print(f"Description: {request.task_data.description}")
-        print(f"Priority: {request.task_data.priority}")
-
-        print("\nUsers:")
-        for user in request.users:
-            print(f"\nUser ID: {user.id}")
-            print(f"Name: {user.full_name}")
-            print(f"Skills: {', '.join(user.skills)}")
-            print("Tasks:", [f"{t.title} ({t.priority})" for t in user.tasks])
-        print("\n================\n")
-
         inputs = {
             "task_data": request.task_data.model_dump(),
             "users": [user.model_dump() for user in request.users],
         }
-
         crewClass = TaskAssignerCrew()
         result = crewClass.crew().kickoff(inputs=inputs)
-        print(result)
         return result
     except Exception as e:
         print(f"Error in assignee_candidates: {e}")

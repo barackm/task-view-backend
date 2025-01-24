@@ -1,0 +1,14 @@
+```json
+{
+  "required_skills": [
+    "React",
+    "TypeScript",
+    "Formik",
+    "Tailwind CSS",
+    "Responsive Design",
+    "React Query",
+    "API Integration"
+  ],
+  "expertise_level": "Intermediate"
+}
+```

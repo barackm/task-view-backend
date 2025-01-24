@@ -1,14 +1,14 @@
 analyze_task:
   description: >
-    Analyze the given task details to identify required skills and expertise level. You must only analyze the provided
-    task, do not make assumptions about other tasks. Output must be in JSON format.
+    Analyze the given task details {task_data} to identify required skills and expertise level. You must only analyze
+    the provided task, do not make assumptions about other tasks. Output must be in JSON format.
   expected_output: >
     JSON containing required_skills array and expertise_level string.
 
 analyze_users:
   description: >
-    Review only the provided users' skills and match against task requirements. Do not invent or assume additional users
-    exist. Output must be in JSON format.
+    Review only the provided users {users} skills and match against task requirements. Do not invent or assume
+    additional users exist. Output must be in JSON format.
   expected_output: >
     JSON containing qualified_users array with user IDs and qualification reasons.
 
@@ -17,4 +17,4 @@ analyze_workload:
     Analyze workload only for the actual provided users. Consider their current number of tasks and the new task
     priority. Output must be in JSON format.
   expected_output: >
-    JSON containing recommended_users array with user IDs and detailed reasons.
+    JSON containing suggestions array with user IDs and detailed reasons.
