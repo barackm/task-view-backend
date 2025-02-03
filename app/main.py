@@ -1,11 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.models.request_models import (
     TaskAssigneeMatchRequest,
     TaskAssigneeMatchResponse,
+    TaskDescriptionRequest,
+    TaskDescriptionResponse,
 )
 from app.ai.crew import TaskAssignerCrew
+from typing import Optional
+from pydantic import BaseModel
 import uvicorn
+from app.ai.openai_client import get_task_description
 
 app = FastAPI(
     title="Task Management API",
@@ -40,6 +45,25 @@ async def assignee_candidates(request: TaskAssigneeMatchRequest):
     except Exception as e:
         print(f"Error in assignee_candidates: {e}")
         return TaskAssigneeMatchResponse(suggestions=[])
+
+
+class TextToSpeechRequest(BaseModel):
+    filename: str
+    voice: Optional[str] = "alloy"
+
+
+@app.post("/suggest-description")
+async def suggest_description(
+    request: TaskDescriptionRequest,
+) -> TaskDescriptionResponse:
+    try:
+        description = get_task_description(request.title)
+        return TaskDescriptionResponse(description=description)
+    except Exception as e:
+        print(f"Error in suggest_description: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to generate task description"
+        )
 
 
 def start():

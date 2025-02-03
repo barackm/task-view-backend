@@ -1,8 +1,12 @@
 {
   "suggestions": [
     {
-      "user_id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
-      "reason": "Fidel Zukerburg is the only qualified user available at this moment. His superb skills in Frontend development, particularly in ReactJS and Tailwind CSS, align perfectly with the new task requirements. He has the capability to handle intermediate to advanced work in front-end applications, making him the best candidate for this assignment. Additionally, as he is currently not overloaded with tasks, he can prioritize this new task effectively."
+      "user_id": "c7a8c939-05e4-48b2-b77d-d095720f048c",
+      "reason": "Andrew Mark is a strong candidate due to his robust backend development skills in NodeJS and Python, which are vital for handling backend services. His expertise in Django also positions him well to contribute effectively to API security and session management, making him well-suited for this task."
+    },
+    {
+      "user_id": "20dcf57f-5d9b-4b34-bdf6-beae455a119a",
+      "reason": "John Doe is another excellent choice as he has strong competencies in Node.js, directly aligning with the requirements of the new task. His proficiency in JavaScript and secure coding practices contributes to both the quality of the code and the overall security measures needed for API development."
     }
   ]
 }

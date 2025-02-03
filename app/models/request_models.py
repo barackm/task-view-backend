@@ -32,3 +32,11 @@ class UserSuggestion(BaseModel):
 
 class TaskAssigneeMatchResponse(BaseModel):
     suggestions: List[UserSuggestion]
+
+
+class TaskDescriptionRequest(BaseModel):
+    title: str
+
+
+class TaskDescriptionResponse(BaseModel):
+    description: str

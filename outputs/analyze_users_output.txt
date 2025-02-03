@@ -1,8 +1,12 @@
 {
   "qualified_users": [
     {
-      "id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
-      "qualification_reason": "Fidel Zukerburg has skills in Frontend development, specifically ReactJS and Tailwind, which align well with the required skills of React, Tailwind CSS, and Responsive Design. His skill set supports the necessary competencies for intermediate to advanced work in front-end applications."
+      "id": "c7a8c939-05e4-48b2-b77d-d095720f048c",
+      "qualification_reason": "Andrew Mark possesses strong backend development skills in NodeJS and Python, which align well with the required skills for backend development and API security. His expertise in Django further enhances his fit for security and session management."
+    },
+    {
+      "id": "20dcf57f-5d9b-4b34-bdf6-beae455a119a",
+      "qualification_reason": "John Doe has strong skills in Node.js, which directly matches the requirement. His proficiency in JavaScript and related technologies supports secure coding practices and API security."
     }
   ]
 }

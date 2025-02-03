@@ -1,13 +1,14 @@
+```json
 {
   "required_skills": [
-    "React",
-    "TypeScript",
-    "Formik",
-    "Tailwind CSS",
-    "Responsive Design",
-    "React Query",
-    "API Integration",
-    "Form Validation"
+    "JWT (JSON Web Tokens)",
+    "Node.js or Python programming",
+    "Backend development",
+    "API security",
+    "Session management",
+    "Implementation of refresh tokens",
+    "Secure coding practices"
   ],
-  "expertise_level": "Intermediate to Advanced"
+  "expertise_level": "Intermediate"
 }
+```
