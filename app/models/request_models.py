@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class UserTask(BaseModel):
@@ -40,3 +40,14 @@ class TaskDescriptionRequest(BaseModel):
 
 class TaskDescriptionResponse(BaseModel):
     description: str
+
+
+class TaskDurationRequest(BaseModel):
+    title: str
+    description: str
+    assignee: Optional[UserProfile] = None  # Reusing existing UserProfile model
+
+
+class TaskDurationResponse(BaseModel):
+    duration: str  # e.g. "2 days", "4 hours"
+    explanation: str  # Why this duration was suggested

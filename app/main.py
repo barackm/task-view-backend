@@ -5,12 +5,14 @@ from app.models.request_models import (
     TaskAssigneeMatchResponse,
     TaskDescriptionRequest,
     TaskDescriptionResponse,
+    TaskDurationRequest,
+    TaskDurationResponse,
 )
 from app.ai.crew import TaskAssignerCrew
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
-from app.ai.openai_client import get_task_description
+from app.ai.openai_client import get_task_description, get_task_duration
 
 app = FastAPI(
     title="Task Management API",
@@ -63,6 +65,23 @@ async def suggest_description(
         print(f"Error in suggest_description: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to generate task description"
+        )
+
+
+@app.post("/suggest-duration")
+async def suggest_duration(
+    request: TaskDurationRequest,
+) -> TaskDurationResponse:
+    try:
+        assignee_dict = request.assignee.model_dump() if request.assignee else None
+        duration, explanation = get_task_duration(
+            request.title, request.description, assignee_dict
+        )
+        return TaskDurationResponse(duration=duration, explanation=explanation)
+    except Exception as e:
+        print(f"Error in suggest_duration: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to generate task duration estimate"
         )
 
 
