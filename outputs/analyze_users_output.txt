@@ -1,12 +1,12 @@
 {
   "qualified_users": [
     {
-      "id": "c7a8c939-05e4-48b2-b77d-d095720f048c",
-      "qualification_reason": "Andrew Mark possesses strong backend development skills in NodeJS and Python, which align well with the required skills for backend development and API security. His expertise in Django further enhances his fit for security and session management."
+      "user_id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
+      "qualification_reason": "Fidel Zukerburg possesses skills in Frontend development and is proficient in HTML, CSS, JavaScript, ReactJS, NextJS, and Tailwind which align with the required skills for UI/UX Design and Responsive Web Design. His task of implementing User Authentication UI Components indicates his capability to apply these skills in practical scenarios."
     },
     {
-      "id": "20dcf57f-5d9b-4b34-bdf6-beae455a119a",
-      "qualification_reason": "John Doe has strong skills in Node.js, which directly matches the requirement. His proficiency in JavaScript and related technologies supports secure coding practices and API security."
+      "user_id": "20dcf57f-5d9b-4b34-bdf6-beae455a119a",
+      "qualification_reason": "John Doe has skills in JavaScript and Node.js, which are foundational for modern web applications. While he lacks direct skills in HTML and CSS, his knowledge of the tech stack can complement responsive design tasks when paired with team efforts, making him a potential asset for UI/UX projects."
     }
   ]
 }

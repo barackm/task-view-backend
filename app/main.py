@@ -13,6 +13,7 @@ from typing import Optional
 from pydantic import BaseModel
 import uvicorn
 from app.ai.openai_client import get_task_description, get_task_duration
+from app.services.db_service import DatabaseService
 
 app = FastAPI(
     title="Task Management API",
@@ -31,7 +32,8 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Task Management API!"}
+    all_tasks = await DatabaseService.get_all_tasks()
+    return {"message": "Welcome to Task Management API!", "tasks": all_tasks}
 
 
 @app.post("/assignee-candidates")

@@ -1,12 +1,12 @@
 {
   "suggestions": [
     {
-      "user_id": "c7a8c939-05e4-48b2-b77d-d095720f048c",
-      "reason": "Andrew Mark is a strong candidate due to his robust backend development skills in NodeJS and Python, which are vital for handling backend services. His expertise in Django also positions him well to contribute effectively to API security and session management, making him well-suited for this task."
+      "user_id": "e5f58da3-5600-4f0d-a2dc-cac80d48d064",
+      "reason": "Fidel Zukerburg is an ideal candidate for the UI/UX Design task due to his extensive skills in Frontend development, particularly his proficiency in HTML, CSS, JavaScript, ReactJS, NextJS, and Tailwind. His current workload indicates he has the capacity to handle the additional task of implementing User Authentication UI Components, aligning perfectly with his qualifications."
     },
     {
       "user_id": "20dcf57f-5d9b-4b34-bdf6-beae455a119a",
-      "reason": "John Doe is another excellent choice as he has strong competencies in Node.js, directly aligning with the requirements of the new task. His proficiency in JavaScript and secure coding practices contributes to both the quality of the code and the overall security measures needed for API development."
+      "reason": "John Doe can be considered for support on the UI/UX project due to his knowledge of JavaScript and Node.js, which can play a complementary role in web development tasks. Although not directly skilled in HTML and CSS, his understanding of the tech stack and potential collaborations within the team can enhance the project's responsive design efforts."
     }
   ]
 }

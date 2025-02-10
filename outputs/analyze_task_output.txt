@@ -1,14 +1,10 @@
-```json
 {
   "required_skills": [
-    "JWT (JSON Web Tokens)",
-    "Node.js or Python programming",
-    "Backend development",
-    "API security",
-    "Session management",
-    "Implementation of refresh tokens",
-    "Secure coding practices"
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Responsive Web Design",
+    "UI/UX Design"
   ],
   "expertise_level": "Intermediate"
 }
-```
