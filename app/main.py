@@ -13,7 +13,7 @@ from typing import Optional
 from pydantic import BaseModel
 import uvicorn
 from app.ai.openai_client import get_task_description, get_task_duration
-from app.services.db_service import DatabaseService
+import logging
 
 app = FastAPI(
     title="Task Management API",
@@ -29,11 +29,16 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
+logger = logging.getLogger(__name__)
+
 
 @app.get("/")
 async def root():
-    all_tasks = await DatabaseService.get_all_tasks()
-    return {"message": "Welcome to Task Management API!", "tasks": all_tasks}
+    try:
+        return {"message": "Welcome to Task Management API!"}
+    except Exception as e:
+        logger.error(f"Error in root endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch profiles")
 
 
 @app.post("/assignee-candidates")
